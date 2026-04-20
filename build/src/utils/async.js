@@ -25,7 +25,7 @@ module.exports = {
     spawn: async (command, args, opts) => {
         console.log(`(*) Spawn: ${command}${args.reduce((prev, current) => `${prev} ${current}`, '')}`);
 
-        opts = opts || { stdio: 'inherit', shell: true };
+        opts = opts || { stdio: 'inherit', shell: false };
         let echo = false;
         if (opts.stdio === 'inherit') {
             opts.stdio = 'pipe';
@@ -73,7 +73,7 @@ module.exports = {
     exec: async (command, opts) => {
         console.log(`(*) Exec: ${command}`);
 
-        opts = opts || { stdio: 'inherit', shell: true };
+        opts = opts || { stdio: 'inherit', shell: false };
         return new Promise((resolve, reject) => {
             let result = '';
             const proc = execCb(command, opts);
