@@ -10,7 +10,7 @@ const rimrafCb = require('rimraf');
 const mkdirpCb = require('mkdirp');
 const copyFilesCb = require('copyfiles');
 const spawnCb = require('child_process').spawn;
-const execCb = require('child_process').exec;
+const execFileCb = require('child_process').execFile;
 
 module.exports = {
 
@@ -25,7 +25,9 @@ module.exports = {
     spawn: async (command, args, opts) => {
         console.log(`(*) Spawn: ${command}${args.reduce((prev, current) => `${prev} ${current}`, '')}`);
 
-        opts = opts || { stdio: 'inherit', shell: false };
+        opts = Object.assign({}, opts || { stdio: 'inherit' });
+        opts.shell = false;
+    
         let echo = false;
         if (opts.stdio === 'inherit') {
             opts.stdio = 'pipe';
@@ -73,10 +75,16 @@ module.exports = {
     exec: async (command, opts) => {
         console.log(`(*) Exec: ${command}`);
 
-        opts = opts || { stdio: 'inherit', shell: false };
+        opts = Object.assign({}, opts || { stdio: 'inherit' });
+        opts.shell = false;
+
+        const parts = command.trim().split(/\s+/);
+        const file = parts[0];
+        const args = parts.slice(1);
+
         return new Promise((resolve, reject) => {
             let result = '';
-            const proc = execCb(command, opts);
+            const proc = execFileCb(file, args, opts);
             proc.on('close', (code, signal) => {
                 if (code !== 0) {
                     console.log(result);
@@ -211,4 +219,3 @@ module.exports = {
         });
     }
 };
-
